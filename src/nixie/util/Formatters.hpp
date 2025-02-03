@@ -11,7 +11,7 @@ struct std::formatter<nixie::Units::ConvertedText, char> {
     }
 
     template<class FmtContext>
-    FmtContext::iterator format(const nixie::Units::ConvertedText& in, FmtContext& ctx) const
+    typename FmtContext::iterator format(const nixie::Units::ConvertedText& in, FmtContext& ctx) const
     {
         std::stringstream out;
         out << in.sourceValue << " is ";
