@@ -189,7 +189,7 @@ inline std::unordered_map<InputUnits, UnitDeclaration> ratios = {
             { ResultType::IM_LIQUID, im_fluid_ounce, MetricUnits::LITER },
             { ResultType::US_LIQUID, us_cust_fluid_ounce, MetricUnits::LITER },
             { ResultType::US_FOOD, us_food_fluid_ounce, MetricUnits::LITER },
-            { ResultType::UNIVERSAL, us_food_fluid_ounce, MetricUnits::KILOGRAM }
+            { ResultType::UNIVERSAL, weight_ounce, MetricUnits::KILOGRAM }
         }
     }},
     {InputUnits::PINT, {
