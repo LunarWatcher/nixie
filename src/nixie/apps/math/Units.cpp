@@ -195,6 +195,8 @@ Units::AutoType Units::truncateValues(double rawValue, Units::MetricUnits baseUn
             exponent += 3;
             rawValue /= 1000.0;
             unitDisplay = std::string(" tonne") + (rawValue != 1.0 ? "s" : "");
+        } else {
+            unitDisplay = "kg";
         }
 
         break;
