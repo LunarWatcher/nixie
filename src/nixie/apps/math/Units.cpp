@@ -189,7 +189,9 @@ Units::AutoType Units::truncateValues(double rawValue, Units::MetricUnits baseUn
             }
 
             // Since the base unit of gram infuriatingly is the kilogram, +3 to the exponent
-            unitDisplay += Ratios::prefixes[exponent + 3];
+            if (exponent + 3 != 0) {
+                unitDisplay += Ratios::prefixes[exponent + 3];
+            }
             unitDisplay += "g";
         } else if (rawValue >= 1000) {
             exponent += 3;
@@ -201,13 +203,17 @@ Units::AutoType Units::truncateValues(double rawValue, Units::MetricUnits baseUn
 
         break;
     case nixie::Units::MetricUnits::LITER:
-        // Max two iterations supported, so hard-coded for convenience
         if (rawValue < 1) {
             rawValue *= 10.0;
             exponent = -1;
-            if (rawValue < 1) {
-                rawValue *= 10.0;
-                exponent -= 1;
+
+            if (rawValue < 0.1) {
+                rawValue *= 100.0;
+                exponent -= 2;
+            }
+            while (rawValue <= 0.001 && Ratios::prefixes.contains(exponent - 3)) {
+                rawValue *= 1000;
+                exponent += 3;
             }
             unitDisplay += Ratios::prefixes[exponent];
         }

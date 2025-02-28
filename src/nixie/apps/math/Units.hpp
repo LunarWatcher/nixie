@@ -236,6 +236,7 @@ inline std::unordered_map<InputUnits, UnitDeclaration> ratios = {
 
 // Stripped down set of prefixes
 inline std::unordered_map<int, std::string> prefixes = {
+    {-9, "n"},
     {-6, "µ"},
     {-3, "m"},
     {-2, "c"}, // Only for liquids
@@ -243,7 +244,8 @@ inline std::unordered_map<int, std::string> prefixes = {
     {0, "\0"},
     {3, "k"},
     {6, "M"},
-    {9, "G"}
+    {9, "G"},
+    {12, "T"},
 };
 
 inline std::unordered_map<ResultType, std::string> typesToNames = {
