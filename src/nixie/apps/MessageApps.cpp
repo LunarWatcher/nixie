@@ -1,12 +1,13 @@
 #include "MessageApps.hpp"
 #include "dispatcher.h"
 #include "nixie/apps/math/Units.hpp"
+#include "nixie/util/Preprocessor.hpp"
 #include <nixie/util/Formatters.hpp>
 
 namespace nixie {
 
 void MessageApps::garbageToMetric(const dpp::message_context_menu_t& ev) {
-    auto content = ev.get_message().content;
+    auto content = Preprocessor::normaliseUnicode(ev.get_message().content);
 
     auto converted = Units::parseMessage(content);
     if (converted.size() == 0) {

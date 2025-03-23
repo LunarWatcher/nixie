@@ -1,5 +1,6 @@
 add_executable(tests
     src/UnitConversionTests.cpp
+    src/PreprocessorTests.cpp
 )
 
 Include(FetchContent)

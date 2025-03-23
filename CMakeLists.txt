@@ -26,11 +26,16 @@ FetchContent_Declare(nlohmann
     GIT_REPOSITORY https://github.com/nlohmann/json
     GIT_TAG v3.11.3
 )
+FetchContent_Declare(utf8
+    GIT_REPOSITORY https://github.com/nemtrif/utfcpp
+    GIT_TAG 65701fe00700577f9f4e9b96d682bd7cfcc0b76e
+)
 
 FetchContent_MakeAvailable(
     spdlog
     nlohmann
     dpp
+    utf8
 )
 
 

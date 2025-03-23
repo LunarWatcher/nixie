@@ -4,6 +4,8 @@ add_library(nixiesrc STATIC
     nixie/apps/MessageApps.cpp
 
     nixie/apps/math/Units.cpp
+
+    nixie/util/Preprocessor.cpp
 )
 add_executable(nixie nixie/Main.cpp)
 
@@ -13,6 +15,7 @@ PUBLIC
     dpp
     spdlog::spdlog
     nlohmann_json::nlohmann_json
+    utf8cpp
 )
 
 target_link_libraries(nixie PUBLIC nixiesrc)
