@@ -1,5 +1,6 @@
 #include "Units.hpp"
 #include "spdlog/spdlog.h"
+#include <cctype>
 #include <cmath>
 #include <stdexcept>
 #include <regex>
@@ -21,7 +22,12 @@ std::vector<Units::ConversionResult> Units::convertUnits(InputUnits inputType, d
         int calcOrder = mappings.inputOrder > 0 ? mappings.inputOrder : order;
         int outputOrder = mappings.outputOrder > 0 ? mappings.outputOrder : calcOrder;
 
-        double metricValue = inputValue * std::pow(conversion.conversionFactor, calcOrder);
+        double metricValue;
+        if (std::holds_alternative<double>(conversion.conversionFactor)) {
+            metricValue = inputValue * std::pow(std::get<double>(conversion.conversionFactor), calcOrder);
+        } else if (std::holds_alternative<Ratios::NonLinConv>(conversion.conversionFactor)) {
+            metricValue = std::get<Ratios::NonLinConv>(conversion.conversionFactor)(inputValue, calcOrder);
+        }
 
         results.push_back({
             .unit = conversion.type,
@@ -44,7 +50,7 @@ std::vector<Units::ConvertedText> Units::parseMessage(const std::string& message
         // Main scenario: number + unit
         // " and ' are caught as fallbacks
         // Groups 7-11
-        R"_(|(((?:\d+[, ]?)+(?:\.\d+)?) ?(square)? ?("|'|(?:mi\b|pt\b|qt|gal\b|yd|ac|st|ft|lbs?)\.?|in(?:ch(?:es)?|\.)?\b|(?:fl.?)?oz\.?|foot|feet|yards?|acres?|pints?|quarts|stone|gallons?|ounc[es]*|miles?|tons?|pounds?)(\^?2)?))_"
+        R"_(|(((?:\d+[, ]?)+(?:\.\d+)?) ?(square)? ?("|'|(?:mi\b|pt\b|qt|gal\b|yd|ac|st|ft|lbs?)\.?|in(?:ch(?:es)?|\.)?\b|(?:fl.?)?oz\.?|foot|feet|yards?|acres?|pints?|quarts|stone|gallons?|ounc[es]*|miles?|tons?|pounds?|f(?:ahrenheit)?\b)(\^?2)?))_"
         ,
         std::regex_constants::optimize | std::regex_constants::icase
     );
@@ -85,6 +91,9 @@ std::vector<Units::ConvertedText> Units::parseMessage(const std::string& message
             quantity.erase(std::remove(quantity.begin(), quantity.end(), ','), quantity.end());
             quantity.erase(std::remove(quantity.begin(), quantity.end(), ' '), quantity.end());
             unit.erase(std::remove(unit.begin(), unit.end(), '.'), unit.end());
+            std::transform(unit.cbegin(), unit.cend(), unit.begin(), [](const auto& chr) {
+                return std::tolower(chr);
+            });
 
             double numericValue = std::stod(quantity);
             InputUnits iu;
@@ -124,6 +133,9 @@ std::vector<Units::ConvertedText> Units::parseMessage(const std::string& message
                 iu = InputUnits::STONE;
             } else if (unit.starts_with("ton")) {
                 iu = InputUnits::TON;
+            } else if (unit.starts_with("f")) { // NOTE: Must be after all other F units, because this is
+                                                   // functionally a catchall
+                iu = InputUnits::FAHRENHEIT;
             } else {
                 spdlog::error("Unknown unit: {}", unit);
                 throw std::runtime_error("A regex pattern is unhandled");
@@ -219,6 +231,9 @@ Units::AutoType Units::truncateValues(double rawValue, Units::MetricUnits baseUn
         }
         unitDisplay += "L";
         break;
+    case nixie::Units::MetricUnits::CELSIUS:
+        unitDisplay += " °C";
+        break;
     }
 
     if (order > 1) {
@@ -233,5 +248,8 @@ Units::AutoType Units::truncateValues(double rawValue, Units::MetricUnits baseUn
     };
 }
 
+double Units::Ratios::fToC(double f, int) {
+    return 5.0 / 9.0 * (f - 32.0);
+}
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <format>
+#include <functional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -31,6 +32,9 @@ enum class InputUnits {
     STONE,
     // Ambiguous 
     TON,
+
+    // Temperature
+    FAHRENHEIT,
 };
 
 enum class ResultType {
@@ -58,6 +62,7 @@ enum class MetricUnits {
     LITER,
     METER,
     KILOGRAM,
+    CELSIUS
 };
 
 struct ConversionResult {
@@ -114,6 +119,8 @@ extern AutoType truncateValues(double rawValue, MetricUnits baseUnit, int order)
 
 namespace Ratios {
 
+using NonLinConv = std::function<double(double value, int calcOrder)>;
+
 // Meter conversions {{{
 constexpr double foot = 0.3048;
 constexpr double inch = 0.0254;
@@ -147,10 +154,13 @@ constexpr double us_ton = 907.18;
 constexpr double pound = 0.45359237;
 constexpr double stone =  6.35029318;
 // }}}
+// Fucking fahrenheit {{{
+double fToC(double f, int);
+// }}}
 
 struct TypedRatio {
     ResultType unit;
-    double conversionFactor;
+    std::variant<double, NonLinConv> conversionFactor;
     MetricUnits type;
 };
 
@@ -231,6 +241,12 @@ inline std::unordered_map<InputUnits, UnitDeclaration> ratios = {
             { ResultType::IM, im_ton, MetricUnits::KILOGRAM },
         }
     }},
+    // }}}
+    // Misc. {{{
+    {InputUnits::FAHRENHEIT, {
+         {{ ResultType::US, &fToC, MetricUnits::CELSIUS },},
+         1, 1
+    }}
     // }}}
 };
 

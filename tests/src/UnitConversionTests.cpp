@@ -56,6 +56,13 @@ TEST_CASE("Verify order = 1 conversions", "[UnitConversion]") {
         REQUIRE(pseudoSolidOunces.at(3).unit == MetricUnits::KILOGRAM);
         REQUIRE_THAT(pseudoSolidOunces.at(3).value, Approx(1.956, 0.1));
     }
+
+    SECTION("Temperature") {
+        auto f = convertUnits(InputUnits::FAHRENHEIT, 69);
+        REQUIRE(f.size() == 1);
+        REQUIRE(f.at(0).unit == MetricUnits::CELSIUS);
+        REQUIRE_THAT(f.at(0).value, Approx(22.555, 0.1));
+    }
 } 
 
 TEST_CASE("Verify order = 1 conversions of area units", "[UnitConversion]") {
@@ -115,6 +122,20 @@ TEST_CASE("Verify message conversion", "[UnitConversion][MessageApps]") {
         REQUIRE(converted.at(6).results.at(2).type == ResultType::US_WET);
         REQUIRE_THAT(converted.at(6).results.at(2).value, Approx(2620426.81, 0.1));
     }
+    SECTION("Upper-case") {
+        SECTION("Temp") {
+            auto converted = parseMessage("69F, 70f, 71 FAHRENHEIT");
+            REQUIRE(converted.size() == 3);
+            for (size_t i = 0; i < converted.size(); ++i) {
+                REQUIRE(converted.at(i).results.size() == 1);
+                REQUIRE(converted.at(i).results.at(0).unit == MetricUnits::CELSIUS);
+            }
+        }
+        SECTION("Other arbitrary units") {
+            auto converted = parseMessage("420LbS 421 PoUndS 422 InCHes");
+            REQUIRE(converted.size() == 3);
+        }
+    }
 
 }
 
@@ -139,11 +160,11 @@ TEST_CASE("Truncation", "[UnitConversion][MessageApps]") {
 
         REQUIRE(liters.unitDisplay == "L");
         REQUIRE(deciliters.unitDisplay == "dL");
-        REQUIRE(centiliters.unitDisplay == "cL");
+        REQUIRE(centiliters.unitDisplay == "dL");
 
         REQUIRE(liters.value == 120);
         REQUIRE_THAT(deciliters.value, Approx(6.5));
-        REQUIRE_THAT(centiliters.value, Approx(3.3));
+        REQUIRE_THAT(centiliters.value, Approx(0.33));
     }
 
     SECTION("Length") {
