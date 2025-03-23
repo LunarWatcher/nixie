@@ -38,6 +38,10 @@ FetchContent_MakeAvailable(
     utf8
 )
 
+if (LINUX)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+    set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+endif()
 
 add_subdirectory(src)
 add_subdirectory(tests EXCLUDE_FROM_ALL)

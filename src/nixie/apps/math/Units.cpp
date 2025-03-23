@@ -27,6 +27,9 @@ std::vector<Units::ConversionResult> Units::convertUnits(InputUnits inputType, d
             metricValue = inputValue * std::pow(std::get<double>(conversion.conversionFactor), calcOrder);
         } else if (std::holds_alternative<Ratios::NonLinConv>(conversion.conversionFactor)) {
             metricValue = std::get<Ratios::NonLinConv>(conversion.conversionFactor)(inputValue, calcOrder);
+        } else {
+            [[unlikely]]
+            throw std::runtime_error("Bad configuration");
         }
 
         results.push_back({
