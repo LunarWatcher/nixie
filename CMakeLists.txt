@@ -15,7 +15,7 @@ include(FetchContent)
 
 FetchContent_Declare(dpp
     GIT_REPOSITORY https://github.com/brainboxdotcc/DPP
-    GIT_TAG e9848086272be8f6a9cb6b44a0423df9a54f296c
+    GIT_TAG v10.1.2 
 )
 
 FetchContent_Declare(spdlog
