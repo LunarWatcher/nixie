@@ -15,9 +15,6 @@ int main() {
 
     bot.on_log([](const dpp::log_t& message) {
         switch (message.severity) {
-        case dpp::loglevel::ll_critical:
-            spdlog::critical(message.message);
-            break;
         case dpp::ll_trace:
             spdlog::trace(message.message);
             break;
@@ -32,6 +29,20 @@ int main() {
             break;
         case dpp::ll_error:
             spdlog::error(message.message);
+
+            // Meant to handle an infuriating post-startup bug where DNS resolution fails. This puts dpp in an
+            // unrecoverable state, where it won't fail, but it won't recover either. It's stuck until it's manually
+            // restarted.
+            // This special abort forces dpp to restart cycle. Pretty sure this is the only error that's critical, but
+            // an error in diguise
+            if (message.message.find("discord.com:443: getaddrinfo error") != std::string::npos) {
+                spdlog::critical("DNS resolution failed. DPP will not recover from this. Aborting");
+                abort();
+            }
+            break;
+        case dpp::ll_critical:
+            spdlog::critical(message.message);
+            abort();
             break;
         default:
             spdlog::error(message.message);
