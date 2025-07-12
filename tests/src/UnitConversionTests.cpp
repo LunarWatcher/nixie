@@ -63,6 +63,7 @@ TEST_CASE("Verify order = 1 conversions", "[UnitConversion]") {
         REQUIRE(f.at(0).unit == MetricUnits::CELSIUS);
         REQUIRE_THAT(f.at(0).value, Approx(22.555, 0.1));
     }
+
 } 
 
 TEST_CASE("Verify order = 1 conversions of area units", "[UnitConversion]") {
@@ -136,7 +137,17 @@ TEST_CASE("Verify message conversion", "[UnitConversion][MessageApps]") {
             REQUIRE(converted.size() == 3);
         }
     }
-
+    SECTION("Alt notation") {
+        SECTION("Temperature") {
+            auto converted = parseMessage("90 °F");
+            REQUIRE(converted.size() == 1);
+            REQUIRE(converted.at(0).results.at(0).unit == MetricUnits::CELSIUS);
+            REQUIRE_THAT(
+                converted.at(0).results.at(0).value,
+                Approx(32.22, 0.1)
+            );
+        }
+    }
 }
 
 TEST_CASE("Truncation", "[UnitConversion][MessageApps]") {
