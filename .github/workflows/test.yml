@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@main
+      - name: Install deps
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install -y uuid-dev libasio-dev
+          python3 -m pip install cmake --break-system-packages
+      - name: Print environment
+        run: |
+          cmake --version
+      - name: Run build
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+          make -j $(nproc)
+      - name: Run tests
+        run: |
+          cd build
+          cmake --build . --target test
