@@ -227,5 +227,17 @@ TEST_CASE("Truncation", "[UnitConversion][MessageApps]") {
         REQUIRE(sqm.unitDisplay == "m^2");
         REQUIRE_THAT(sqm.value, Approx(1000.0));
     }
+    SECTION("Small distances") {
+        // 2in^2
+        auto sqin = truncateValues(0.00129, MetricUnits::METER, 2);
+        REQUIRE(sqin.unitDisplay == "cm^2");
+        REQUIRE_THAT(sqin.value, Approx(12.9));
+    }
+    SECTION("Millimeter conversion when sufficiently small") {
+        // 0.1in^2
+        auto sqin = truncateValues(0.0000645, MetricUnits::METER, 2);
+        REQUIRE(sqin.unitDisplay == "mm^2");
+        REQUIRE(sqin.value == 64.5);
+    }
 
 }

@@ -180,12 +180,26 @@ Units::AutoType Units::truncateValues(double rawValue, Units::MetricUnits baseUn
             exponent -= 2;
             rawValue *= 100.0;
         } else {
-            while (rawValue >= conversionOperator) {
-                if (Ratios::prefixes.contains(exponent - 3)) {
-                    exponent += 3;
-                    rawValue /= conversionOperator;
-                } else {
-                    break;
+            if (order == 2 && rawValue <= 0.01 && rawValue >= 0.0001) {
+                exponent -= 2;
+                rawValue *= std::pow(100.0, 2);
+            } else if (order == 2 && rawValue < 1) {
+                while(rawValue < 1) {
+                    if (Ratios::prefixes.contains(exponent - 3)) {
+                        exponent -= 3;
+                        rawValue *= conversionOperator;
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                while (rawValue >= conversionOperator) {
+                    if (Ratios::prefixes.contains(exponent - 3)) {
+                        exponent += 3;
+                        rawValue /= conversionOperator;
+                    } else {
+                        break;
+                    }
                 }
             }
         }
