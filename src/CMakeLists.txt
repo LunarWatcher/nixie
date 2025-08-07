@@ -18,6 +18,17 @@ PUBLIC
     utf8cpp
 )
 
+target_compile_options(
+    nixiesrc 
+PRIVATE
+    $<$<AND:$<CONFIG:Debug>,$<BOOL:${NIXIE_COVERAGE}>>:-fprofile-arcs -ftest-coverage>
+)
+target_link_options(
+    nixiesrc 
+PUBLIC
+    $<$<AND:$<CONFIG:Debug>,$<BOOL:${NIXIE_COVERAGE}>>:--coverage>
+)
+
 target_link_libraries(nixie PUBLIC nixiesrc)
 
 # vim:ft=cmake
