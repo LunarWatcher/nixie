@@ -89,9 +89,6 @@ TEST_CASE("Verify message conversion", "[UnitConversion][MessageApps]") {
         const std::string sampleMessage = R"('6' is just a string. 5"11 is one garbage unit, and so is 6"9' and 6' and 6". 69 miles over 420 square inches explains why 692,243.53 gallons is a dumb value)";
 
         auto converted = parseMessage(sampleMessage);
-        for (auto& entry : converted) {
-            INFO(entry.sourceValue);
-        }
         REQUIRE(converted.size() == 7);
         REQUIRE(converted.at(0).sourceValue == "5\"11");
         REQUIRE(converted.at(1).sourceValue == "6\"9'");
@@ -146,6 +143,26 @@ TEST_CASE("Verify message conversion", "[UnitConversion][MessageApps]") {
                 converted.at(0).results.at(0).value,
                 Approx(32.22, 0.1)
             );
+        }
+    }
+    SECTION("Square notations") {
+        SECTION("x unit^2") {
+            const std::string sampleMessage = "2 in^2";
+            auto converted = parseMessage(sampleMessage);
+            REQUIRE(converted.size() == 1);
+
+            REQUIRE(converted.at(0).results.at(0).order == 2);
+            // 12.9cm^2 == 0.00129m^2
+            REQUIRE_THAT(converted.at(0).results.at(0).value, Approx(0.00129, 0.001));
+        }
+        SECTION("x square unit") {
+            const std::string sampleMessage = " 3 square inches"; 
+            auto converted = parseMessage(sampleMessage);
+            REQUIRE(converted.size() == 1);
+
+            REQUIRE(converted.at(0).results.at(0).order == 2);
+            REQUIRE(converted.at(0).results.at(0).unit == MetricUnits::METER);
+            REQUIRE_THAT(converted.at(0).results.at(0).value, Approx(0.001935, 0.001));
         }
     }
 }

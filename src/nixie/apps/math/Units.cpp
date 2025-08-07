@@ -53,7 +53,7 @@ std::vector<Units::ConvertedText> Units::parseMessage(const std::string& message
         // Main scenario: number + unit
         // " and ' are caught as fallbacks
         // Groups 7-11
-        R"_(|(((?:\d+[, ]?)+(?:\.\d+)?) ?(square)? ?("|'|(?:mi\b|pt\b|qt|gal\b|yd|ac|st|ft|lbs?)\.?|in(?:ch(?:es)?|\.)?\b|(?:fl.?)?oz\.?|foot|feet|yards?|acres?|pints?|quarts|stone|gallons?|ounc[es]*|miles?|tons?|pounds?|(°)?f(?:ahrenheit)?\b)(\^?2)?))_"
+        R"_(|(((?:\d+[, ]?)+(?:\.\d+)?) ?(square)? ?("|'|(?:mi\b|pt\b|qt|gal\b|yd|ac|st|ft|lbs?)\.?|in(?:ch(?:es)?|\.)?\b|(?:fl.?)?oz\.?|foot|feet|yards?|acres?|pints?|quarts|stone|gallons?|ounc[es]*|miles?|tons?|pounds?|(?:°)?f(?:ahrenheit)?\b)(\^?2)?))_"
         ,
         std::regex_constants::optimize | std::regex_constants::icase
     );
