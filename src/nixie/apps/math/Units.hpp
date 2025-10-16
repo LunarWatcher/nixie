@@ -2,6 +2,7 @@
 
 #include <format>
 #include <functional>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -262,6 +263,18 @@ inline std::unordered_map<int, std::string> prefixes = {
     {6, "M"},
     {9, "G"},
     {12, "T"},
+};
+inline std::map<std::string, int> prefixToMagnitude = {
+    {"n", -9},
+    {"µ", -6},
+    {"m", -3},
+    {"c", -2}, // Only for liquids
+    {"d", -1}, // Only for liquids
+    {"\0", 0},
+    {"k", 3},
+    {"M", 6},
+    {"G", 9},
+    {"T", 12},
 };
 
 inline std::unordered_map<ResultType, std::string> typesToNames = {
