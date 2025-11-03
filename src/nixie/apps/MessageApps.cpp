@@ -30,7 +30,7 @@ void MessageApps::garbageToMetric(const dpp::message_context_menu_t& ev) {
 
 void MessageApps::metricToAmerican(const dpp::message_context_menu_t& ev) {
     static std::regex metricDistRegex{
-        "(-?\\d+) ?([cmkdM])?m\\b"
+        "(-?\\d+\.?\\d*) ?([cmkdM])?m\\b"
     };
 
     auto content = Preprocessor::normaliseUnicode(ev.get_message().content);
